@@ -1,4 +1,5 @@
 import sys
+import chess
 
 class AI:
     # A value which is better than winning.
@@ -18,7 +19,8 @@ class AI:
 
     # Create a new AI.
     def __init__(board, color):
-        self.color = color
+        self.board = board
+        self.color = color # 1 for white, -1 for black.
         pass
 
     # Find and return the best move for the given position.    
@@ -29,9 +31,47 @@ class AI:
         return last_found_move
 
     # 
-    def findMove(board, depth, saveMove, turn, alpha, beta):
+    def find_move(board, depth, saveMove, turn, alpha, beta):
+        if board.is_checkmate():
+            if depth >= max_depth(board) - 2:
+                return -turn * self.WINNING_VALUE
+            else:
+                return -turn * self.WILL_WIN_VALUE
+
+        if board.is_stalemate or board.can_claim_draw(): # add more
+            return 0
+
         if depth == 0:
             return static_score(board)
+
+        possible_moves = board.legal_moves
+        best_value = -turn * self.INFTY
+        current_value = 0
+
+        for move in possible_moves:
+            board.push(move)
+            current_value = find_move(board, depth - 1, False, turn * -1, alpha, beta)
+            board.pop()
+            if turn == 1:
+                if current_value > best_value:
+                    best_value = current_value
+                    if saveMove:
+                        self.last_found_move = move
+                alpha = max(alpha, best_value)
+            else:
+                if current_value < best_value:
+                    best_value = current_value
+                    if saveMove:
+                        self.last_found_move = move
+                beta = min(beta, best_value)
+            
+           
+            if beta <= alpha:
+                break
+            
+
+
+
         
         
         
