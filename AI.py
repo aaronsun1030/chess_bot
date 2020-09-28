@@ -1,6 +1,6 @@
 import sys
 import chess
-import chess.pgn
+import heuristic
 
 class AI:
     
@@ -37,11 +37,11 @@ class AI:
             else:
                 return -turn * self.WILL_WIN_VALUE
 
-        if board.is_stalemate() or board.can_claim_draw(): # add more
+        if board.is_game_over():
             return 0
 
         if depth == 0:
-            return self.heuristic.static_score(board)
+            return self.heuristic.static_score(board.fen())
 
         possible_moves = board.legal_moves
         best_value = -turn * self.INFTY
@@ -71,25 +71,4 @@ class AI:
         return best_value
         
     def max_depth(self, board):
-        return 3
-
-
-"""import heuristic
-h = heuristic.heuristic()
-game = chess.pgn.Game()
-b = chess.Board()
-white = AI(b, 1, h)
-black = AI(b, -1, h)
-m = white.best_move()
-b.push(m)
-node = game.add_variation(m)
-while not b.is_game_over():
-    m = black.best_move()
-    b.push(m)
-    node = node.add_variation(m)
-    if b.is_game_over():
-        break
-    m = white.best_move()
-    b.push(m)
-    node = node.add_variation(m)
-print(game)"""
+        return 4
