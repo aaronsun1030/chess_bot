@@ -1,6 +1,11 @@
 import sys
-import chess
-import heuristic
+import time
+"""
+This file runs an AI that does alpha-beta pruning with the 
+inputted heuristic. This is not intended to be changed for the 
+purposes of the competition.
+"""
+
 
 class AI:
     
@@ -20,19 +25,33 @@ class AI:
         # 1 for white, -1 for black.
         self.color = color 
         self.heuristic = heuristic
+        self.current_depth = 0
         pass
  
     def best_move(self):
         """Find and return the best move for the given position."""  
         self.last_found_move = None
-        self.find_move(self.board, self.max_depth(self.board), True,
-                self.color, -1 * self.INFTY, self.INFTY)
+        self.iterative_deepening(20)
         return self.last_found_move
+    
+    def iterative_deepening(self, limit):
+        """Run iterative deepening, stopping on the last depth once time runs out"""
+        t1 = time.time()
+        d = 2
+        while time.time() - t1 < limit:
+            self.current_depth = d
+            print(d)
+            print(time.time() - t1)
+            self.find_move(self.board, d, True,
+                self.color, -1 * self.INFTY, self.INFTY)
+            d += 2
+
+            
 
     def find_move(self, board, depth, saveMove, turn, alpha, beta):
         """Does alpha-beta pruning to find the best move for the given position."""
         if board.is_checkmate():
-            if depth >= self.max_depth(board) - 2:
+            if depth >= self.current_depth - 2:
                 return -turn * self.WINNING_VALUE
             else:
                 return -turn * self.WILL_WIN_VALUE
@@ -69,6 +88,3 @@ class AI:
                 break
 
         return best_value
-        
-    def max_depth(self, board):
-        return 4

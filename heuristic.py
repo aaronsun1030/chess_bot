@@ -1,6 +1,14 @@
 import random
 import re
 
+"""
+This class is a chess heuristic whose main function
+is static_score, which takes in a FEN and outputs a 
+scoring of the board. The heuristic does not need to take into
+account checkmates, as this is handled in AI. 
+This file is meant to be changed for the purposes of the competition.
+"""
+
 class heuristic:
 
     def __init__(self):

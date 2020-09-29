@@ -4,6 +4,12 @@ import game
 import heuristic
 import AI
 
+"""
+This file runs a sample game, either between 2 AIs given in 
+AI.py or between user input and a single AI. This is primarily meant to 
+be used in order to test the AI.
+"""
+
 def main():
     num_AI = int(input("Enter your desired number of AIs (1 or 2): "))
     assert num_AI == 1 or num_AI == 2
