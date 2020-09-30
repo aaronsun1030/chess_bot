@@ -11,52 +11,62 @@ class AI:
     
     def __init__(self, board, color, heuristic):
         """Create a new AI."""
+        # 1 for white, -1 for black.
+        self.color = color
+        # Inputted heuristic with static_score and think_time
+        self.heuristic = heuristic
+        # Chessboard
+        self.board = board
+
         # A value which is better than winning.
         self.INFTY = sys.maxsize - 1
-        # A value to indicate a player will win in the next move. Use this for faster wins.
-        self.WINNING_VALUE = sys.maxsize - 10
         # A value to indicate a player will win in the coming moves.
-        self.WILL_WIN_VALUE = sys.maxsize - 20
-
+        self.WINNING_VALUE = sys.maxsize - 20
 
         # The best move in the current position.
         self.last_found_move = None
-        self.board = board
-        # 1 for white, -1 for black.
-        self.color = color 
-        self.heuristic = heuristic
+
+        # Iterative deepening stuff
         self.current_depth = 0
+        self.time_limit = 0
+        self.start_time = 0
         pass
  
     def best_move(self):
         """Find and return the best move for the given position."""  
         self.last_found_move = None
-        self.iterative_deepening(self.heuristic.think_time(self.board.fen(), 0, 0))
-        return self.last_found_move
+        move = self.iterative_deepening(self.heuristic.think_time(self.board.fen(), 0, 0))
+        return move
     
     def iterative_deepening(self, limit):
         """Run iterative deepening, stopping on the last depth once time runs out"""
-        t1 = time.time()
+        self.start_time = time.time()
+        self.time_limit = limit
         d = 2
-        while time.time() - t1 < limit:
+        move = None
+        while time.time() - self.start_time < limit:
             self.current_depth = d
-            print(d)
-            print(time.time() - t1)
+            move = self.last_found_move
+            print("evaluating at depth", d)
+            print(time.time() - self.start_time)
             self.find_move(self.board, d, True,
                 self.color, -1 * self.INFTY, self.INFTY)
             d += 2
+        return move
 
             
 
     def find_move(self, board, depth, saveMove, turn, alpha, beta):
         """Does alpha-beta pruning to find the best move for the given position."""
-        if board.is_checkmate():
-            if depth >= self.current_depth - 2:
-                return -turn * self.WINNING_VALUE
-            else:
-                return -turn * self.WILL_WIN_VALUE
 
-        if board.is_game_over():
+        if time.time() - self.start_time > self.time_limit:
+            print("timelimit reached")
+            print(time.time() - self.start_time)
+            return None
+
+        if board.is_checkmate():
+            return -turn * (self.WINNING_VALUE - (self.current_depth - depth))
+        if board.can_claim_draw():
             return 0
 
         if depth == 0:
@@ -70,6 +80,8 @@ class AI:
             board.push(move)
             current_value = self.find_move(board, depth - 1, False, turn * -1, alpha, beta)
             board.pop()
+            if current_value is None:
+                return None 
             if turn == 1:
                 if current_value > best_value:
                     best_value = current_value
@@ -82,7 +94,6 @@ class AI:
                     if saveMove:
                         self.last_found_move = move
                 beta = min(beta, best_value)
-            
            
             if beta <= alpha:
                 break
