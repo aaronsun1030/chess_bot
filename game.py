@@ -10,29 +10,22 @@ AI.py or between user input and a single AI. This is primarily meant to
 be used in order to test the AI.
 """
 
-def run_AI_game(b, h, game):
+def run_AI_game(b, h):
     white = AI.AI(b, 1, h)
     black = AI.AI(b, -1, h)
-    m = white.best_move()
-    b.push(m)
-    node = game.add_variation(m)
-    while not b.is_game_over():
+    while not b.is_game_over(claim_draw=True):
         if b.turn == chess.BLACK:
             m = black.best_move()
             b.push(m)
-            node = node.add_variation(m)
         else:
             m = white.best_move()
             b.push(m)
-            node = node.add_variation(m)
-        if b.can_claim_draw():
-            b.is_game_over(claim_draw=True)
         print(b)
         print()
 
-def run_human_AI_game(b, h, game, color):
+def run_human_AI_game(b, h, color):
     ai = AI.AI(b, color, h)
-    while not b.is_game_over():
+    while not b.is_game_over(claim_draw=True):
         if b.turn == chess.WHITE and color == 1 or b.turn == chess.BLACK and color == -1:
             print("AI is thinking...")
             m = ai.best_move()
@@ -44,16 +37,10 @@ def run_human_AI_game(b, h, game, color):
                     break
                 except ValueError as e:
                     print(e)
-        if node:
-            node = node.add_variation(m)
-        else:
-            node = game.add_variation(m)
         b.push(m)
         print(b)
         print("Current static score:", h.static_score(b.fen()))
         print()
-        if b.can_claim_draw():
-            b.is_game_over(claim_draw=True)
 
 def main():
     num_AI = int(input("Enter your desired number of AIs (1 or 2): "))
@@ -69,12 +56,11 @@ def main():
     b = chess.Board(fen)
     h = heuristic.heuristic()
 
-    game = chess.pgn.Game()
     if color:
-        run_human_AI_game(b, h, game, color)
+        run_human_AI_game(b, h, color)
     else:
-        run_AI_game(b, h, game)
-    print(game)
+        run_AI_game(b, h)
+    print(chess.pgn.Game().from_board(b))
 
 
 if __name__ == "__main__":

@@ -47,8 +47,6 @@ class AI:
         while time.time() - self.start_time < limit:
             self.current_depth = d
             move = self.last_found_move
-            print("evaluating at depth", d)
-            print(time.time() - self.start_time)
             self.find_move(self.board, d, True,
                 self.color, -1 * self.INFTY, self.INFTY)
             d += 2
@@ -60,8 +58,6 @@ class AI:
         """Does alpha-beta pruning to find the best move for the given position."""
 
         if time.time() - self.start_time > self.time_limit:
-            print("timelimit reached")
-            print(time.time() - self.start_time)
             return None
 
         if board.is_checkmate():
