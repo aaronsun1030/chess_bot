@@ -40,51 +40,68 @@ class AI:
         d = 2
         while time.time() - t1 < limit:
             self.current_depth = d
+            print("evaluating at depth")
             print(d)
             print(time.time() - t1)
             self.find_move(self.board, d, True,
-                self.color, -1 * self.INFTY, self.INFTY)
+                self.color, -1 * self.INFTY, self.INFTY, t1, limit)
             d += 2
 
             
 
-    def find_move(self, board, depth, saveMove, turn, alpha, beta):
+    def find_move(self, board, depth, saveMove, turn, alpha, beta, startTime, limit):
         """Does alpha-beta pruning to find the best move for the given position."""
+        if time.time()-startTime > limit:
+            print("timelimit reached")
+            print(time.time() - startTime)
+            return False, 0
+
         if board.is_checkmate():
             if depth >= self.current_depth - 2:
-                return -turn * self.WINNING_VALUE
+                return True, -turn * self.WINNING_VALUE
             else:
-                return -turn * self.WILL_WIN_VALUE
+                return True, -turn * self.WILL_WIN_VALUE
 
         if board.is_game_over():
-            return 0
+            return True, 0
 
         if depth == 0:
-            return self.heuristic.static_score(board.fen())
+            return True, self.heuristic.static_score(board.fen())
 
         possible_moves = board.legal_moves
         best_value = -turn * self.INFTY
         current_value = 0
 
+        found_move = None
+
         for move in possible_moves:
             board.push(move)
-            current_value = self.find_move(board, depth - 1, False, turn * -1, alpha, beta)
-            board.pop()
+            time_remaining, current_value = self.find_move(board, depth - 1, False, turn * -1, alpha, beta, startTime, limit)
+            if not time_remaining:
+                board.pop()
+                return False, 0
+
+            board.pop() 
             if turn == 1:
                 if current_value > best_value:
                     best_value = current_value
                     if saveMove:
-                        self.last_found_move = move
+                        found_move = move
                 alpha = max(alpha, best_value)
             else:
                 if current_value < best_value:
                     best_value = current_value
                     if saveMove:
-                        self.last_found_move = move
+                        found_move = move
                 beta = min(beta, best_value)
             
            
             if beta <= alpha:
                 break
 
-        return best_value
+        if saveMove:
+            print("updated move")
+            print(found_move)
+            self.last_found_move = found_move
+
+        return True, best_value
