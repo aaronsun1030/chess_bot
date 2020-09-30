@@ -54,19 +54,19 @@ class AI:
         if time.time()-startTime > limit:
             print("timelimit reached")
             print(time.time() - startTime)
-            return False, 0
+            return None
 
         if board.is_checkmate():
             if depth >= self.current_depth - 2:
-                return True, -turn * self.WINNING_VALUE
+                return -turn * self.WINNING_VALUE
             else:
-                return True, -turn * self.WILL_WIN_VALUE
+                return -turn * self.WILL_WIN_VALUE
 
         if board.is_game_over():
-            return True, 0
+            return 0
 
         if depth == 0:
-            return True, self.heuristic.static_score(board.fen())
+            return self.heuristic.static_score(board.fen())
 
         possible_moves = board.legal_moves
         best_value = -turn * self.INFTY
@@ -76,10 +76,10 @@ class AI:
 
         for move in possible_moves:
             board.push(move)
-            time_remaining, current_value = self.find_move(board, depth - 1, False, turn * -1, alpha, beta, startTime, limit)
-            if not time_remaining:
+            current_value = self.find_move(board, depth - 1, False, turn * -1, alpha, beta, startTime, limit)
+            if current_value is None:
                 board.pop()
-                return False, 0
+                return None
 
             board.pop() 
             if turn == 1:
@@ -104,4 +104,4 @@ class AI:
             print(found_move)
             self.last_found_move = found_move
 
-        return True, best_value
+        return best_value
