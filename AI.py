@@ -31,7 +31,7 @@ class AI:
     def best_move(self):
         """Find and return the best move for the given position."""  
         self.last_found_move = None
-        self.iterative_deepening(20)
+        self.iterative_deepening(self.heuristic.think_time(self.board.fen(), 0, 0))
         return self.last_found_move
     
     def iterative_deepening(self, limit):
