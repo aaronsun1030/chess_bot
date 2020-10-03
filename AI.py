@@ -1,5 +1,7 @@
 import sys
 import time
+import random
+from chess.polyglot import POLYGLOT_RANDOM_ARRAY, ZobristHasher
 """
 This file runs an AI that does alpha-beta pruning with the 
 inputted heuristic. This is not intended to be changed for the 
@@ -21,7 +23,7 @@ class AI:
         # A value which is better than winning.
         self.INFTY = sys.maxsize - 1
         # A value to indicate a player will win in the coming moves.
-        self.WINNING_VALUE = sys.maxsize - 20
+        self.WINNING_VALUE = sys.maxsize - 60
 
         # The best move in the current position.
         self.last_found_move = None
@@ -30,6 +32,11 @@ class AI:
         self.current_depth = 0
         self.time_limit = 0
         self.start_time = 0
+
+        # Transposition table stuff
+        self.TABLE_SIZE = 2000
+        self.t_table = [None] * self.TABLE_SIZE
+        self.hasher = ZobristHasher(random.choice(POLYGLOT_RANDOM_ARRAY))
         pass
  
     def best_move(self):
@@ -52,18 +59,27 @@ class AI:
             d += 2
         return move
 
-            
-
     def find_move(self, board, depth, saveMove, turn, alpha, beta):
         """Does alpha-beta pruning to find the best move for the given position."""
 
         if time.time() - self.start_time > self.time_limit:
             return None
-
         if board.is_checkmate():
             return -turn * (self.WINNING_VALUE - (self.current_depth - depth))
         if board.can_claim_draw():
             return 0
+
+        b_index = self.hasher(board) % self.TABLE_SIZE
+        b_prev = self.t_table[b_index]
+        if b_prev:
+            if b_prev[0] == board.fen():
+                if b_prev[3] >= depth:
+                    if saveMove:
+                        self.last_found_move = b_prev[4]
+                    return b_prev[1]
+                else:
+                    pass
+            
 
         if depth == 0:
             return self.heuristic.static_score(board.fen())
@@ -71,6 +87,7 @@ class AI:
         possible_moves = board.legal_moves
         best_value = -turn * self.INFTY
         current_value = 0
+        refute = None
 
         for move in possible_moves:
             board.push(move)
@@ -81,18 +98,24 @@ class AI:
             if turn == 1:
                 if current_value > best_value:
                     best_value = current_value
-                    if saveMove:
-                        self.last_found_move = move
+                    refute = move
                 alpha = max(alpha, best_value)
             else:
                 if current_value < best_value:
                     best_value = current_value
-                    if saveMove:
-                        self.last_found_move = move
+                    refute = move
                 beta = min(beta, best_value)
            
             if beta <= alpha:
                 break
+            
+        if saveMove:
+            self.last_found_move = refute
+
+        
+        self.t_table[b_index] = (board.fen(), best_value, 
+            "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
+            depth, refute)
 
         return best_value
 
