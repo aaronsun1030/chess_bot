@@ -43,7 +43,7 @@ class AI:
         self.start_time = time.time()
         self.time_limit = limit
         d = 2
-        move = None
+        move = list(self.board.legal_moves)[0]
         while time.time() - self.start_time < limit:
             self.current_depth = d
             move = self.last_found_move
