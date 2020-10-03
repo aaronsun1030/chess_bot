@@ -1,0 +1,21 @@
+Heuristic competition rules
+
+Outline
+The goal of the heuristic competition is to see who can come up with the best heuristic by hand. No "training" will be allowed, and the goal is to see who has the best ideas about chess positions!
+The AI outlines have already been written beforehand, and the only thing you have to do is generate a static scoring for positions of the board.
+
+Coding Details
+The given starting files are used to facilitate your testing. You may modify them for your own purposes, but everyones code will use the same files other than your heuristic.
+AI.py: The fundamental file which holds the class AI, which runs alpha-beta pruning based on your heuristic. This will be updated by the organizers as the competition progresses to make your both better.
+heuristic.py: The superclass for your heuristic file. You should import the heuristic class from this file for your own heuristic.
+game.py: The fake GUI class. Run this to test your by playing it yourself, or have it play against itself and view the game after it concludes.
+jenny.py: A sample submission. The class inherits from heuristic, and has its own static_score and think_time methods with the same function signatures. Although, they are random and we don't recommend that.
+
+Your Job
+Make a file, your_file_name.py which has a class your_class_name which inherits herustic. Heuristic has some helper functions, but you don't have to use them.
+Your class should include methods:
+static_score, which takes in a FEN and outputs a scoring of the board. Mate/draw conditions are handled by AI.py, but nothing else is basically.
+think_time, which takes in the current position as a FEN, your remaining time, and the opponent's time. Outputs the time that you will take to think on this move. 
+
+Rules
+
