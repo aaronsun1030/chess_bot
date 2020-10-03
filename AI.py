@@ -95,3 +95,6 @@ class AI:
                 break
 
         return best_value
+
+    def move_order(self):
+        pass
