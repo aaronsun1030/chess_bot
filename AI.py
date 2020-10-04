@@ -54,6 +54,7 @@ class AI:
         while time.time() - self.start_time < limit:
             self.current_depth = d
             print(d, time.time() - self.start_time)
+            #if self.last_found_move:
             move = self.last_found_move
             self.find_move(self.board, d, True,
                 self.color, -1 * self.INFTY, self.INFTY, False)
@@ -83,12 +84,12 @@ class AI:
                 b_prev = None
 
         if depth == 0:
-            q_val = self.find_move(board, self.current_depth, False, turn,
-                alpha, beta, True)
-            if q_val:
-                return q_val
-            else:
-                return self.heuristic.static_score(board.fen())
+            if not Q:
+                q_val = self.find_move(board, self.current_depth, False, turn,
+                    alpha, beta, True)
+                if q_val:
+                    return q_val
+            return self.heuristic.static_score(board.fen())
 
         best_value = -turn * self.INFTY
         current_value = 0
@@ -122,6 +123,8 @@ class AI:
                 "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
                 depth, refute)
 
+        if best_value == -turn * self.INFTY:
+            return None
         return best_value
 
     def move_order(self, board, b_prev, Q):
@@ -150,3 +153,10 @@ class AI:
         if not Q:
             for m in moves:
                 yield m
+
+"""import heuristic
+import chess
+b = chess.Board()
+h = heuristic.heuristic()
+a = AI(b, 1, h)
+a.best_move()"""
