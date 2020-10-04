@@ -112,7 +112,6 @@ class AI:
         if saveMove:
             self.last_found_move = refute
 
-        
         self.t_table[b_index] = (board.fen(), best_value, 
             "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
             depth, refute)
@@ -130,12 +129,13 @@ class AI:
             else:
                 if board.gives_check(m):
                     checks.append(m)
-        captures.sort(key=lambda m: 8 if board.is_en_passant(m) else 
+        captures.sort(key=lambda m: 90 if board.is_en_passant(m) else 
             9 * self.pieces[board.piece_type_at(m.from_square)] - 
             self.pieces[board.piece_type_at(m.to_square)])
         
         if b_prev:
-            yield b_prev[4]
+            if b_prev[4]:
+                yield b_prev[4]
         for c in captures:
             yield c
             moves.remove(c)
@@ -145,3 +145,9 @@ class AI:
         for m in moves:
             yield m
 
+import chess
+import heuristic
+h = heuristic.heuristic()
+b = chess.Board('1k6/7R/8/8/8/8/8/1RR4K b - - 1 1')
+a = AI(b, -1, h)
+a.best_move()
