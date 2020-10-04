@@ -40,7 +40,7 @@ class AI:
         self.pieces = {1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 0}
 
         # Quiescence stuff
-        self.delta = 2
+        self.delta = 2.5
  
     def best_move(self):
         """Find and return the best move for the given position."""  
@@ -59,8 +59,6 @@ class AI:
             print(d, time.time() - self.start_time)
             if self.last_found_move:
                 move = self.last_found_move
-            if d == 4:
-                break
             self.find_move(self.board, d, True,
                 self.color, -1 * self.INFTY, self.INFTY)
             d += 1
@@ -76,7 +74,7 @@ class AI:
                 return None
 
         if depth == 0:
-            return self.quiescence(board, self.current_depth * 2, False, 
+            return self.quiescence(board, self.current_depth, False, 
                 turn, -1 * self.INFTY, self.INFTY)
         
         b_prev = None
@@ -123,7 +121,7 @@ class AI:
                 return alpha
 
         best_value, _ = self.alpha_beta_pruning(board, depth,
-            self.move_order(board, None, True), turn, alpha, beta, True)
+            self.move_order(board, None, True), turn, alpha, beta, pat)
 
         if best_value == -turn * self.INFTY:
             return pat
@@ -149,8 +147,18 @@ class AI:
         for move in moves:
             board.push(move)
             if Q:
-                current_value = self.quiescence(board, depth - 1, 
-                    False, turn * -1, alpha, beta)
+                if not board.is_capture(move):
+                    current_value = self.quiescence(board, depth - 1, 
+                        False, turn * -1, alpha, beta)
+                else:
+                    a = alpha if turn == 1 else beta
+                    future = Q + turn * self.pieces[board.piece_type_at(move.to_square) or 1]
+                    cutoff = a - turn * self.delta
+                    if future < turn * cutoff:
+                        current_value = alpha if turn == 1 else beta
+                    else:
+                        current_value = self.quiescence(board, depth - 1, 
+                            False, turn * -1, alpha, beta)
             else:
                 current_value = self.find_move(board, depth - 1, 
                     False, turn * -1, alpha, beta)
@@ -171,6 +179,7 @@ class AI:
                 break
         
         return best_value, refute
+            
 
     def move_order(self, board, b_prev, Q):
         Q = Q and not board.is_check()
@@ -202,9 +211,9 @@ class AI:
             for m in moves:
                 yield m
 
-import heuristic
+"""import heuristic
 import chess
 b = chess.Board('r1bqkb1r/pppn1ppp/5n2/3N2B1/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 6')
 h = heuristic.heuristic()
 a = AI(b, -1, h)
-print(a.best_move())
+print(a.best_move())"""
