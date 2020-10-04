@@ -36,7 +36,7 @@ class AI:
         # Transposition table stuff
         self.TABLE_SIZE = 2000
         self.t_table = [None] * self.TABLE_SIZE
-        self.hasher = ZobristHasher(random.choice(POLYGLOT_RANDOM_ARRAY))
+        self.hasher = ZobristHasher(POLYGLOT_RANDOM_ARRAY)
         pass
  
     def best_move(self):
@@ -53,6 +53,7 @@ class AI:
         move = list(self.board.legal_moves)[0]
         while time.time() - self.start_time < limit:
             self.current_depth = d
+            print(d, time.time() - self.start_time)
             move = self.last_found_move
             self.find_move(self.board, d, True,
                 self.color, -1 * self.INFTY, self.INFTY)

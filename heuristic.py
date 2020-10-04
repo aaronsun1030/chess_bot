@@ -42,5 +42,5 @@ class heuristic:
         return array  
 
     def think_time(self, fen, my_time, opp_time):
-        return 3
+        return 20
 
