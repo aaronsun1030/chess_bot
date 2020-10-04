@@ -21,6 +21,7 @@ def run_AI_game(b, h):
             m = white.best_move()
             b.push(m)
         print(b)
+        print("Current static score:", h.static_score(b.fen()))
         print()
 
 def run_human_AI_game(b, h, color):
