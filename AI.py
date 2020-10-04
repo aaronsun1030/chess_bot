@@ -37,7 +37,7 @@ class AI:
         self.TABLE_SIZE = 2000
         self.t_table = [None] * self.TABLE_SIZE
         self.hasher = ZobristHasher(POLYGLOT_RANDOM_ARRAY)
-        pass
+        self.pieces = {1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 0}
  
     def best_move(self):
         """Find and return the best move for the given position."""  
@@ -77,15 +77,14 @@ class AI:
                 if b_prev[3] >= depth:
                     if saveMove:
                         self.last_found_move = b_prev[4]
-                    return b_prev[1]
-                else:
-                    pass
-            
+                    return b_prev[1]  
+            else:
+                b_prev = None
 
         if depth == 0:
             return self.heuristic.static_score(board.fen())
 
-        possible_moves = board.legal_moves
+        possible_moves = self.move_order(board, b_prev)
         best_value = -turn * self.INFTY
         current_value = 0
         refute = None
@@ -120,5 +119,28 @@ class AI:
 
         return best_value
 
-    def move_order(self):
-        pass
+    def move_order(self, board, b_prev):
+        moves = set(board.legal_moves)
+        if b_prev:
+            yield b_prev[4]
+
+        captures = []
+        checks = []
+        for m in moves:
+            if board.is_capture(m):
+                captures.append(m)
+            else:
+                if board.is_check(m):
+                    checks.append(m)
+        captures.sort(key=lambda m: 9 * self.pieces[board.piece_type_at(m.from_square)] - 
+            self.pieces[board.piece_type_at(m.to_square)])
+        
+        for c in captures:
+            yield c
+            moves.remove(c)
+        for c in checks:
+            yield c
+            moves.remove(c)
+        for m in moves:
+            yield m
+
