@@ -23,7 +23,7 @@ class AI:
         # A value which is better than winning.
         self.INFTY = sys.maxsize - 1
         # A value to indicate a player will win in the coming moves.
-        self.WINNING_VALUE = sys.maxsize - 60
+        self.WINNING_VALUE = sys.maxsize - 100
 
         # The best move in the current position.
         self.last_found_move = None
@@ -52,7 +52,7 @@ class AI:
         """Run iterative deepening, stopping on the last depth once time runs out"""
         self.start_time = time.time()
         self.time_limit = limit
-        d = 2
+        d = 3
         move = list(self.board.legal_moves)[0]
         while time.time() - self.start_time < limit and d <= 4:
             self.current_depth = d
@@ -66,10 +66,10 @@ class AI:
 
     def find_move(self, board, depth, saveMove, turn, alpha, beta):
         """Does alpha-beta pruning to find the best move for the given position."""
-        limit = self.check_limits(board, depth)
+        limit = self.check_limits(board, depth, False)
         if limit:
             if isinstance(limit, int):
-                return limit * -turn
+                return 0 if limit == 1 else limit * -turn
             else:
                 return None
 
@@ -101,7 +101,7 @@ class AI:
         return best_value
 
     def quiescence(self, board, depth, saveMove, turn, alpha, beta):
-        limit = self.check_limits(board, depth)
+        limit = self.check_limits(board, depth, True)
         if limit:
             if isinstance(limit, int):
                 return limit * -turn
@@ -129,13 +129,13 @@ class AI:
         return best_value
         
 
-    def check_limits(self, board, depth):
+    def check_limits(self, board, depth, Q):
         if time.time() - self.start_time > self.time_limit:
             return True
         if board.is_checkmate():
-            return self.WINNING_VALUE - (self.current_depth - depth)
-        if board.can_claim_draw():
-            return 0
+            return self.WINNING_VALUE - ((self.current_depth - depth) + (self.current_depth if Q else 0))
+        if board.can_claim_draw() or board.is_stalemate():
+            return 1
         return False
 
     def alpha_beta_pruning(self, board, depth, moves, turn, alpha, beta, Q):
@@ -211,9 +211,9 @@ class AI:
             for m in moves:
                 yield m
 
-"""import heuristic
+import heuristic
 import chess
-b = chess.Board('r1bqkb1r/pppn1ppp/5n2/3N2B1/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 6')
+b = chess.Board('4k2r/3p1pp1/4p2p/7P/p7/b2n4/2K1b3/4q3 b k - 0 29')
 h = heuristic.heuristic()
 a = AI(b, -1, h)
-print(a.best_move())"""
+print(a.best_move())
