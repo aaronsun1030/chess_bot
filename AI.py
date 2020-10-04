@@ -121,8 +121,6 @@ class AI:
 
     def move_order(self, board, b_prev):
         moves = set(board.legal_moves)
-        if b_prev:
-            yield b_prev[4]
 
         captures = []
         checks = []
@@ -130,11 +128,14 @@ class AI:
             if board.is_capture(m):
                 captures.append(m)
             else:
-                if board.is_check(m):
+                if board.gives_check(m):
                     checks.append(m)
-        captures.sort(key=lambda m: 9 * self.pieces[board.piece_type_at(m.from_square)] - 
+        captures.sort(key=lambda m: 8 if board.is_en_passant(m) else 
+            9 * self.pieces[board.piece_type_at(m.from_square)] - 
             self.pieces[board.piece_type_at(m.to_square)])
         
+        if b_prev:
+            yield b_prev[4]
         for c in captures:
             yield c
             moves.remove(c)
