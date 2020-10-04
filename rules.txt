@@ -1,4 +1,5 @@
 Heuristic competition rules
+DUE DATE: 11:59 PM PST December 31, 2020
 
 Outline
 The goal of the heuristic competition is to see who can come up with the best heuristic by hand. No "training" will be allowed, and the goal is to see who has the best ideas about chess positions!
@@ -18,4 +19,7 @@ static_score, which takes in a FEN and outputs a scoring of the board. Mate/draw
 think_time, which takes in the current position as a FEN, your remaining time, and the opponent's time. Outputs the time that you will take to think on this move. 
 
 Rules
+1. No outsourced engines.
+2. No opening books/tablebases.
+3. No "training." This means everything value you set/use should be set by hand.
 
