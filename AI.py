@@ -56,11 +56,11 @@ class AI:
             print(d, time.time() - self.start_time)
             move = self.last_found_move
             self.find_move(self.board, d, True,
-                self.color, -1 * self.INFTY, self.INFTY)
+                self.color, -1 * self.INFTY, self.INFTY, False)
             d += 2
         return move
 
-    def find_move(self, board, depth, saveMove, turn, alpha, beta):
+    def find_move(self, board, depth, saveMove, turn, alpha, beta, Q):
         """Does alpha-beta pruning to find the best move for the given position."""
 
         if time.time() - self.start_time > self.time_limit:
@@ -70,6 +70,7 @@ class AI:
         if board.can_claim_draw():
             return 0
 
+        
         b_index = self.hasher(board) % self.TABLE_SIZE
         b_prev = self.t_table[b_index]
         if b_prev:
@@ -82,16 +83,20 @@ class AI:
                 b_prev = None
 
         if depth == 0:
-            return self.heuristic.static_score(board.fen())
+            q_val = self.find_move(board, self.current_depth, False, turn,
+                alpha, beta, True)
+            if q_val:
+                return q_val
+            else:
+                return self.heuristic.static_score(board.fen())
 
-        possible_moves = self.move_order(board, b_prev)
         best_value = -turn * self.INFTY
         current_value = 0
         refute = None
 
-        for move in possible_moves:
+        for move in self.move_order(board, b_prev, Q):
             board.push(move)
-            current_value = self.find_move(board, depth - 1, False, turn * -1, alpha, beta)
+            current_value = self.find_move(board, depth - 1, False, turn * -1, alpha, beta, Q)
             board.pop()
             if current_value is None:
                 return None 
@@ -112,15 +117,15 @@ class AI:
         if saveMove:
             self.last_found_move = refute
 
-        self.t_table[b_index] = (board.fen(), best_value, 
-            "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
-            depth, refute)
+        if not Q:
+            self.t_table[b_index] = (board.fen(), best_value, 
+                "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
+                depth, refute)
 
         return best_value
 
-    def move_order(self, board, b_prev):
+    def move_order(self, board, b_prev, Q):
         moves = set(board.legal_moves)
-
         captures = []
         checks = []
         for m in moves:
@@ -142,12 +147,6 @@ class AI:
         for c in checks:
             yield c
             moves.remove(c)
-        for m in moves:
-            yield m
-
-import chess
-import heuristic
-h = heuristic.heuristic()
-b = chess.Board('1k6/7R/8/8/8/8/8/1RR4K b - - 1 1')
-a = AI(b, -1, h)
-a.best_move()
+        if not Q:
+            for m in moves:
+                yield m
