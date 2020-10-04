@@ -54,7 +54,7 @@ class AI:
         self.time_limit = limit
         d = 3
         move = list(self.board.legal_moves)[0]
-        while time.time() - self.start_time < limit and d <= 4:
+        while time.time() - self.start_time < limit:
             self.current_depth = d
             print(d, time.time() - self.start_time)
             if self.last_found_move:
@@ -210,10 +210,3 @@ class AI:
         if not Q:
             for m in moves:
                 yield m
-
-import heuristic
-import chess
-b = chess.Board('4k2r/3p1pp1/4p2p/7P/p7/b2n4/2K1b3/4q3 b k - 0 29')
-h = heuristic.heuristic()
-a = AI(b, -1, h)
-print(a.best_move())
