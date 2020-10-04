@@ -38,6 +38,9 @@ class AI:
         self.t_table = [None] * self.TABLE_SIZE
         self.hasher = ZobristHasher(POLYGLOT_RANDOM_ARRAY)
         self.pieces = {1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 0}
+
+        # Quiescence stuff
+        self.delta = 2
  
     def best_move(self):
         """Find and return the best move for the given position."""  
@@ -51,27 +54,32 @@ class AI:
         self.time_limit = limit
         d = 2
         move = list(self.board.legal_moves)[0]
-        while time.time() - self.start_time < limit:
+        while time.time() - self.start_time < limit and d <= 4:
             self.current_depth = d
             print(d, time.time() - self.start_time)
-            #if self.last_found_move:
-            move = self.last_found_move
+            if self.last_found_move:
+                move = self.last_found_move
+            if d == 4:
+                break
             self.find_move(self.board, d, True,
-                self.color, -1 * self.INFTY, self.INFTY, False)
-            d += 2
+                self.color, -1 * self.INFTY, self.INFTY)
+            d += 1
         return move
 
-    def find_move(self, board, depth, saveMove, turn, alpha, beta, Q):
+    def find_move(self, board, depth, saveMove, turn, alpha, beta):
         """Does alpha-beta pruning to find the best move for the given position."""
+        limit = self.check_limits(board, depth)
+        if limit:
+            if isinstance(limit, int):
+                return limit * -turn
+            else:
+                return None
 
-        if time.time() - self.start_time > self.time_limit:
-            return None
-        if board.is_checkmate():
-            return -turn * (self.WINNING_VALUE - (self.current_depth - depth))
-        if board.can_claim_draw():
-            return 0
-
+        if depth == 0:
+            return self.quiescence(board, self.current_depth * 2, False, 
+                turn, -1 * self.INFTY, self.INFTY)
         
+        b_prev = None
         b_index = self.hasher(board) % self.TABLE_SIZE
         b_prev = self.t_table[b_index]
         if b_prev:
@@ -83,21 +91,69 @@ class AI:
             else:
                 b_prev = None
 
+        best_value, refute = self.alpha_beta_pruning(board, depth,
+            self.move_order(board, b_prev, False), turn, alpha, beta, False)
+
+        if saveMove:
+            self.last_found_move = refute
+        self.t_table[b_index] = (board.fen(), best_value, 
+            "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
+            depth, refute)
+
+        return best_value
+
+    def quiescence(self, board, depth, saveMove, turn, alpha, beta):
+        limit = self.check_limits(board, depth)
+        if limit:
+            if isinstance(limit, int):
+                return limit * -turn
+            else:
+                return None
         if depth == 0:
-            if not Q:
-                q_val = self.find_move(board, self.current_depth, False, turn,
-                    alpha, beta, True)
-                if q_val:
-                    return q_val
             return self.heuristic.static_score(board.fen())
+        
+        pat = self.heuristic.static_score(board.fen())
+        if turn == 1:
+            alpha = min(pat, alpha)
+            if pat >= beta:
+                return beta
+        else:
+            beta = max(pat, beta)
+            if pat <= alpha:
+                return alpha
+
+        best_value, _ = self.alpha_beta_pruning(board, depth,
+            self.move_order(board, None, True), turn, alpha, beta, True)
+
+        if best_value == -turn * self.INFTY:
+            return pat
+
+        return best_value
+        
+
+    def check_limits(self, board, depth):
+        if time.time() - self.start_time > self.time_limit:
+            return True
+        if board.is_checkmate():
+            return self.WINNING_VALUE - (self.current_depth - depth)
+        if board.can_claim_draw():
+            return 0
+        return False
+
+    def alpha_beta_pruning(self, board, depth, moves, turn, alpha, beta, Q):
 
         best_value = -turn * self.INFTY
         current_value = 0
         refute = None
 
-        for move in self.move_order(board, b_prev, Q):
+        for move in moves:
             board.push(move)
-            current_value = self.find_move(board, depth - 1, False, turn * -1, alpha, beta, Q)
+            if Q:
+                current_value = self.quiescence(board, depth - 1, 
+                    False, turn * -1, alpha, beta)
+            else:
+                current_value = self.find_move(board, depth - 1, 
+                    False, turn * -1, alpha, beta)
             board.pop()
             if current_value is None:
                 return None 
@@ -110,24 +166,14 @@ class AI:
                 if current_value < best_value:
                     best_value = current_value
                     refute = move
-                beta = min(beta, best_value)
-           
+                beta = min(beta, best_value) 
             if beta <= alpha:
                 break
-            
-        if saveMove:
-            self.last_found_move = refute
-
-        if not Q:
-            self.t_table[b_index] = (board.fen(), best_value, 
-                "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
-                depth, refute)
-
-        if best_value == -turn * self.INFTY:
-            return None
-        return best_value
+        
+        return best_value, refute
 
     def move_order(self, board, b_prev, Q):
+        Q = Q and not board.is_check()
         moves = set(board.legal_moves)
         captures = []
         checks = []
@@ -146,17 +192,19 @@ class AI:
                 yield b_prev[4]
         for c in captures:
             yield c
-            moves.remove(c)
+            if not Q:
+                moves.remove(c)
         for c in checks:
             yield c
-            moves.remove(c)
+            if not Q:
+                moves.remove(c)
         if not Q:
             for m in moves:
                 yield m
 
-"""import heuristic
+import heuristic
 import chess
-b = chess.Board()
+b = chess.Board('r1bqkb1r/pppn1ppp/5n2/3N2B1/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 6')
 h = heuristic.heuristic()
-a = AI(b, 1, h)
-a.best_move()"""
+a = AI(b, -1, h)
+print(a.best_move())

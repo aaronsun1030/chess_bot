@@ -23,7 +23,7 @@ class heuristic:
             for j in range(len(board[i])):
                 if board[i][j] in self.pieces:
                     score += self.pieces[board[i][j]]
-        return score + random.random() / 3
+        return score # + random.random() / 3
 
     def fen_to_array(self, fen):
         """Takes in a FEN and outputs the chessboard as a 2D array (8x8), which holds rows of squares, where each square is 
@@ -42,5 +42,5 @@ class heuristic:
         return array  
 
     def think_time(self, fen, my_time, opp_time):
-        return 20
+        return 2022
 
