@@ -121,7 +121,9 @@ class AI:
                 return alpha
 
         best_value, _ = self.alpha_beta_pruning(board, depth,
-            self.move_order(board, None, True), turn, alpha, beta, pat)
+            self.move_order(board, None, True), turn, alpha, beta,
+            lambda m: pat + turn * self.pieces[board.piece_type_at(m.to_square) or 1] < 
+                turn * ((alpha if turn == 1 else beta) - self.delta))
 
         if best_value == -turn * self.INFTY:
             return pat
@@ -139,7 +141,6 @@ class AI:
         return False
 
     def alpha_beta_pruning(self, board, depth, moves, turn, alpha, beta, Q):
-
         best_value = -turn * self.INFTY
         current_value = 0
         refute = None
@@ -151,10 +152,7 @@ class AI:
                     current_value = self.quiescence(board, depth - 1, 
                         False, turn * -1, alpha, beta)
                 else:
-                    a = alpha if turn == 1 else beta
-                    future = Q + turn * self.pieces[board.piece_type_at(move.to_square) or 1]
-                    cutoff = a - turn * self.delta
-                    if future < turn * cutoff:
+                    if Q(move):
                         current_value = alpha if turn == 1 else beta
                     else:
                         current_value = self.quiescence(board, depth - 1, 
@@ -210,3 +208,10 @@ class AI:
         if not Q:
             for m in moves:
                 yield m
+
+import heuristic
+import chess
+h = heuristic.heuristic()
+b = chess.Board('1nbqkbnr/rpppp1p1/5p2/p6p/3PPP2/PQ1B3P/1PP3P1/RNB1K1NR w KQ - 0 9')
+a = AI(b, 1, h)
+print(a.best_move())
