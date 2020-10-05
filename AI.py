@@ -150,7 +150,7 @@ class AI:
         if best_value == -turn * self.INFTY:
             return pat
 
-        return max(best_value, pat) if turn == 1 else min(best_value, pat)
+        return best_value
         
 
     def check_limits(self, board, depth, Q):
@@ -163,6 +163,7 @@ class AI:
         return False
 
     def alpha_beta_pruning(self, board, depth, moves, turn, alpha, beta, Q):
+
         best_value = -turn * self.INFTY
         current_value = 0
         refute = None
@@ -199,7 +200,7 @@ class AI:
             if beta <= alpha:
                 break
         
-        return best_value, refute
+        return alpha if turn == 1 else beta, refute
             
 
     def move_order(self, board, b_prev, Q):
@@ -235,7 +236,7 @@ class AI:
 import heuristic
 import chess
 h = heuristic.heuristic()
-b = chess.Board('rnb1kbnr/pppp1ppp/4p3/8/7q/2P2PP1/PP1PP2P/RNBQKBNR b KQkq - 0 1')
+b = chess.Board('rnb1k2r/1pppbppp/4p2n/p7/P3P3/2P5/1P1PBPPP/RNB1K1NR b KQkq - 0 8')
 a = AI(b, -1, h)
 print(a.best_move())
 print(a.delta_count, a.fut_count)
