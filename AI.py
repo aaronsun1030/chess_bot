@@ -40,7 +40,10 @@ class AI:
         self.pieces = {1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 0}
 
         # Quiescence stuff
-        self.delta = 2.5
+        self.delta = 2
+        self.futility = [0, 3, 5, 9]
+        self.fut_count = 0
+        self.delta_count = 0
  
     def best_move(self):
         """Find and return the best move for the given position."""  
@@ -56,6 +59,8 @@ class AI:
         move = list(self.board.legal_moves)[0]
         while time.time() - self.start_time < limit:
             self.current_depth = d
+            print('delta:', self.delta_count, 'futility:', self.fut_count)
+            self.delta_count = self.fut_count = 0
             print(d, time.time() - self.start_time)
             if self.last_found_move:
                 move = self.last_found_move
@@ -74,8 +79,23 @@ class AI:
                 return None
 
         if depth == 0:
-            return self.quiescence(board, self.current_depth, False, 
+            return self.quiescence(board, self.current_depth * 2, False, 
                 turn, -1 * self.INFTY, self.INFTY)
+        elif depth < self.current_depth and depth <= 3:
+            if not board.is_check():
+                try:
+                    prev = board.pop()
+                except IndexError:
+                    prev = None
+                if prev and board.is_capture(prev):
+                    board.push(prev)
+                else:
+                    if prev:
+                        board.push(prev)
+                    pat = self.heuristic.static_score(board.fen())
+                    if turn * (pat + turn * self.futility[depth]) < turn * (alpha if turn == 1 else beta):
+                        self.fut_count += 1
+                        return pat
         
         b_prev = None
         b_index = self.hasher(board) % self.TABLE_SIZE
@@ -112,18 +132,18 @@ class AI:
         
         pat = self.heuristic.static_score(board.fen())
         if turn == 1:
-            alpha = min(pat, alpha)
+            alpha = max(pat, alpha)
             if pat >= beta:
                 return beta
         else:
-            beta = max(pat, beta)
+            beta = min(pat, beta)
             if pat <= alpha:
                 return alpha
 
         best_value, _ = self.alpha_beta_pruning(board, depth,
             self.move_order(board, None, True), turn, alpha, beta,
-            lambda m: pat + turn * self.pieces[board.piece_type_at(m.to_square) or 1] < 
-                turn * ((alpha if turn == 1 else beta) - self.delta))
+            lambda m, a: turn * (pat + turn * 
+                (self.pieces[board.piece_type_at(m.to_square) or 1] + self.delta)) < turn * a)
 
         if best_value == -turn * self.INFTY:
             return pat
@@ -152,7 +172,8 @@ class AI:
                     current_value = self.quiescence(board, depth - 1, 
                         False, turn * -1, alpha, beta)
                 else:
-                    if Q(move):
+                    if Q(move, alpha if turn == 1 else beta):
+                        self.delta_count += 1
                         current_value = alpha if turn == 1 else beta
                     else:
                         current_value = self.quiescence(board, depth - 1, 
@@ -209,9 +230,10 @@ class AI:
             for m in moves:
                 yield m
 
-import heuristic
+"""import heuristic
 import chess
 h = heuristic.heuristic()
-b = chess.Board('1nbqkbnr/rpppp1p1/5p2/p6p/3PPP2/PQ1B3P/1PP3P1/RNB1K1NR w KQ - 0 9')
+b = chess.Board('r1bqkb1r/pppn1ppp/5n2/3p2B1/3P4/2N5/PP2PPPP/R2QKBNR w KQkq - 0 6')
 a = AI(b, 1, h)
 print(a.best_move())
+print(a.delta_count, a.fut_count)"""
