@@ -64,6 +64,7 @@ class AI:
             print(d, time.time() - self.start_time)
             if self.last_found_move:
                 move = self.last_found_move
+                print('Best move:', move)
             self.find_move(self.board, d, True,
                 self.color, -1 * self.INFTY, self.INFTY)
             d += 1
@@ -93,7 +94,8 @@ class AI:
                     if prev:
                         board.push(prev)
                     pat = self.heuristic.static_score(board.fen())
-                    if turn * (pat + turn * self.futility[depth]) < turn * (alpha if turn == 1 else beta):
+                    if (turn * (pat - turn * self.futility[depth]) >= 
+                        turn * (beta if turn == 1 else alpha)):
                         self.fut_count += 1
                         return pat
         
@@ -233,7 +235,7 @@ class AI:
 """import heuristic
 import chess
 h = heuristic.heuristic()
-b = chess.Board('r1bqkb1r/pppn1ppp/5n2/3p2B1/3P4/2N5/PP2PPPP/R2QKBNR w KQkq - 0 6')
-a = AI(b, 1, h)
+b = chess.Board('r1bqkb1r/pppn1ppp/5n2/3N2B1/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 6')
+a = AI(b, -1, h)
 print(a.best_move())
 print(a.delta_count, a.fut_count)"""
