@@ -150,14 +150,14 @@ class AI:
         if best_value == -turn * self.INFTY:
             return pat
 
-        return best_value
+        return max(best_value, pat) if turn == 1 else min(best_value, pat)
         
 
     def check_limits(self, board, depth, Q):
         if time.time() - self.start_time > self.time_limit:
             return True
         if board.is_checkmate():
-            return self.WINNING_VALUE - ((self.current_depth - depth) + (self.current_depth if Q else 0))
+            return self.WINNING_VALUE - ((self.current_depth - depth) + (2 * self.current_depth if Q else 0))
         if board.can_claim_draw() or board.is_stalemate():
             return 1
         return False
@@ -232,10 +232,10 @@ class AI:
             for m in moves:
                 yield m
 
-"""import heuristic
+import heuristic
 import chess
 h = heuristic.heuristic()
-b = chess.Board('r1bqkb1r/pppn1ppp/5n2/3N2B1/3P4/8/PP2PPPP/R2QKBNR b KQkq - 0 6')
+b = chess.Board('rnb1kbnr/pppp1ppp/4p3/8/7q/2P2PP1/PP1PP2P/RNBQKBNR b KQkq - 0 1')
 a = AI(b, -1, h)
 print(a.best_move())
-print(a.delta_count, a.fut_count)"""
+print(a.delta_count, a.fut_count)
