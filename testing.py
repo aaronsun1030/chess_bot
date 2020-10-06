@@ -13,6 +13,7 @@ black = AI.AI(None, -1, h)
 tactic = chess.pgn.read_game(pgn)
 fail = False
 last_d = 0
+num = 0
 
 while tactic:
     player = white if tactic.headers._tag_roster['White'] == 'solver' else black
@@ -40,6 +41,10 @@ while tactic:
     if not fail:
         failed.write("Success at depth " + str(last_d) + " in " + str(time.time() - start) + " seconds for the last iteration.\n\n")
         tactic = chess.pgn.read_game(pgn)
+        num += 1
+        if num % 100 == 0:
+            failed.close()
+            failed = open("testing/failed.txt", 'a')
     else:
         failed.write('Failed at depth ' + str(last_d) + " in " + str(time.time() - start) + ' seconds. Trying again at a higher depth.\n')
 
