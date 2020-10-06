@@ -27,16 +27,15 @@ for i in range(num):
 num = 0
 
 while tactic:
-    fail = False
     if first_try:
         player = white if tactic.headers._tag_roster['White'] == 'solver' else black
-        player.d_limit = 1
-        last_d = player.d_limit
-        player.board = tactic.board()
-        turn = 0
+        last_d = 1
     else:
-        player.d_limit = last_d + 1
         last_d += 1
+    player.d_limit = last_d
+    turn = 0
+    fail = False
+    player.board = tactic.board()
     start = time.time()
     for move in tactic.mainline_moves():
         if turn % 2 != 0:
@@ -47,6 +46,7 @@ while tactic:
                 failed.write("Played move " + str(m) + " instead of " + str(move) + '\n')
                 fail = True
                 break
+            player.d_limit -= 1
         turn += 1
         player.board.push(move)
     if not fail:
