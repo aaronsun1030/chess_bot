@@ -59,12 +59,14 @@ class AI:
         move = list(self.board.legal_moves)[0]
         while time.time() - self.start_time < limit:
             self.current_depth = d
-            print('delta:', self.delta_count, 'futility:', self.fut_count)
+            #print('delta:', self.delta_count, 'futility:', self.fut_count)
             self.delta_count = self.fut_count = 0
-            print(d, time.time() - self.start_time)
+            #print(d, time.time() - self.start_time)
             if self.last_found_move:
                 move = self.last_found_move
-                print('Best move:', move)
+                #print('Best move:', move)
+                if d == 3:
+                    break
             self.find_move(self.board, d, True,
                 self.color, -1 * self.INFTY, self.INFTY)
             d += 1
@@ -133,14 +135,15 @@ class AI:
             return self.heuristic.static_score(board.fen())
         
         pat = self.heuristic.static_score(board.fen())
-        if turn == 1:
-            alpha = max(pat, alpha)
-            if pat >= beta:
-                return beta
-        else:
-            beta = min(pat, beta)
-            if pat <= alpha:
-                return alpha
+        if not board.is_check():
+            if turn == 1:
+                alpha = max(pat, alpha)
+                if pat >= beta:
+                    return beta
+            else:
+                beta = min(pat, beta)
+                if pat <= alpha:
+                    return alpha
 
         best_value, _ = self.alpha_beta_pruning(board, depth,
             self.move_order(board, None, True), turn, alpha, beta,
@@ -233,10 +236,11 @@ class AI:
             for m in moves:
                 yield m
 
-import heuristic
+"""import heuristic
 import chess
 h = heuristic.heuristic()
-b = chess.Board('rnb1k2r/1pppbppp/4p2n/p7/P3P3/2P5/1P1PBPPP/RNB1K1NR b KQkq - 0 8')
-a = AI(b, -1, h)
+b = chess.Board('rnb5/pp2nppk/2p4p/2bp3q/P6P/1P4P1/2PPNP2/R1BQKR2 w Q - 0 16')
+a = AI(b, 1, h)
+random.seed(2000000)
 print(a.best_move())
-print(a.delta_count, a.fut_count)
+print(a.delta_count, a.fut_count)"""
