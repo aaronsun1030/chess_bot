@@ -61,12 +61,10 @@ class AI:
             self.current_depth = d
             #print('delta:', self.delta_count, 'futility:', self.fut_count)
             self.delta_count = self.fut_count = 0
-            #print(d, time.time() - self.start_time)
+            print(d, time.time() - self.start_time)
             if self.last_found_move:
                 move = self.last_found_move
                 #print('Best move:', move)
-                if d == 3:
-                    break
             self.find_move(self.board, d, True,
                 self.color, -1 * self.INFTY, self.INFTY)
             d += 1
