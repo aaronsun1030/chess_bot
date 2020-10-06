@@ -1,0 +1,36 @@
+[Event "0735 25632"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "solver"]
+[Result "*"][SetUp "1"]
+[FEN "8/8/8/6R1/P4p2/3K1k2/6r1/8 w KQkq - 0 1"]
+
+1. Rxg2 Kxg2 2. a5 f3 3. a6 f2 4. a7 f1=Q+ *
+Played move g2f2 instead of f4f3
+Failed at depth 3. Trying again at a higher depth.
+[Event "0735 25632"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "solver"]
+[Result "*"][SetUp "1"]
+[FEN "8/8/8/6R1/P4p2/3K1k2/6r1/8 w KQkq - 0 1"]
+
+1. Rxg2 Kxg2 2. a5 f3 3. a6 f2 4. a7 f1=Q+ *
+Played move g2f2 instead of f4f3
+Failed at depth 4. Trying again at a higher depth.
+[Event "0735 25632"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "solver"]
+[Result "*"][SetUp "1"]
+[FEN "8/8/8/6R1/P4p2/3K1k2/6r1/8 w KQkq - 0 1"]
+
+1. Rxg2 Kxg2 2. a5 f3 3. a6 f2 4. a7 f1=Q+ *
+Played move g2h1 instead of f3f2
+Failed at depth 5. Trying again at a higher depth.
