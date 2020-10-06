@@ -54,7 +54,7 @@ class AI:
         """Run iterative deepening, stopping on the last depth once time runs out"""
         self.start_time = time.time()
         self.time_limit = limit
-        d = 1
+        d = self.d_limit
         move = list(self.board.legal_moves)[0]
         while time.time() - self.start_time < limit:
             self.current_depth = d

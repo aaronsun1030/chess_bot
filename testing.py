@@ -2,6 +2,7 @@ import AI
 import heuristic
 import chess.pgn
 import chess
+import time
 
 pgn = open("testing/tactics.pgn")
 failed = open("testing/failed.txt", 'w')
@@ -18,12 +19,13 @@ while tactic:
     player.board = tactic.board()
     turn = 0
     if not fail:
-        player.d_limit = min(int(len(list(tactic.mainline_moves())) / 3) + 1, 3)
+        player.d_limit = 1
         last_d = player.d_limit
     else:
         player.d_limit = last_d + 1
         last_d += 1
         fail = False
+    start = time.time()
     for move in tactic.mainline_moves():
         if turn % 2 != 0:
             m = player.best_move()
@@ -36,9 +38,10 @@ while tactic:
         turn += 1
         player.board.push(move)
     if not fail:
+        failed.write("Success at depth " + str(last_d) + " in " + str(time.time() - start) + " seconds for the last iteration.\n\n")
         tactic = chess.pgn.read_game(pgn)
     else:
-        failed.write('Failed at depth ' + str(last_d) + '. Trying again at a higher depth.\n')
+        failed.write('Failed at depth ' + str(last_d) + " in " + str(time.time() - start) + ' seconds. Trying again at a higher depth.\n')
 
 pgn.close()
 failed.close()
