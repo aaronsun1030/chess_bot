@@ -52,7 +52,7 @@ while tactic:
         current = open("testing/current.txt", 'w')
         current.write(str(num))
         current.close()
-        if num % 100 == 0:
+        if num % 8000 == 0:
             break
         first_try = True
     else:
