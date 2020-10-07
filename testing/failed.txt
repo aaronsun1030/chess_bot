@@ -1227,3 +1227,309 @@ Success at depth 1 in 0.06123042106628418 seconds for the last iteration.
 
 Success at depth 1 in 0.009629011154174805 seconds for the last iteration.
 
+[Event "0993 42943"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "5rk1/p5pp/2n1Rq2/8/8/1P3PQ1/P5PP/5BK1 b KQkq - 0 1"]
+
+1... Qxe6 2. Bc4 *
+Played move g3g5 instead of f1c4
+Failed at depth 1 in 0.2709476947784424 seconds. Trying again at a higher depth.
+Success at depth 2 in 4.988896369934082 seconds for the last iteration.
+
+Success at depth 1 in 0.3840353488922119 seconds for the last iteration.
+
+Success at depth 1 in 0.09326982498168945 seconds for the last iteration.
+
+Success at depth 1 in 0.5613706111907959 seconds for the last iteration.
+
+Success at depth 1 in 0.006352901458740234 seconds for the last iteration.
+
+[Event "0994 20728"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "r1b2rk1/2R2ppp/1p2p3/8/3P4/P3P3/3B1PPP/5RK1 b KQkq - 0 1"]
+
+1... Rxa3 2. Bb4 *
+Played move c7c1 instead of d2b4
+Failed at depth 1 in 0.16791653633117676 seconds. Trying again at a higher depth.
+Success at depth 2 in 1.745929479598999 seconds for the last iteration.
+
+[Event "0995 40848"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "solver"]
+[Result "*"][SetUp "1"]
+[FEN "4R3/2p2p2/5k2/3PbP1p/4K2P/p7/8/8 w KQkq - 0 1"]
+
+1. Rxe5 a2 *
+Played move f6g7 instead of a3a2
+Failed at depth 1 in 0.013395071029663086 seconds. Trying again at a higher depth.
+Success at depth 2 in 0.12724041938781738 seconds for the last iteration.
+
+Success at depth 1 in 0.5877506732940674 seconds for the last iteration.
+
+Success at depth 1 in 0.36055803298950195 seconds for the last iteration.
+
+Success at depth 1 in 0.5381886959075928 seconds for the last iteration.
+
+[Event "0995 63613"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "8/7p/p1P3p1/Pk6/1pR5/4PK1P/3r2P1/8 b KQkq - 0 1"]
+
+1... Kxc4 2. c7 *
+Played move f3g3 instead of c6c7
+Failed at depth 1 in 0.048021554946899414 seconds. Trying again at a higher depth.
+Played move e3e4 instead of c6c7
+Failed at depth 2 in 0.8748569488525391 seconds. Trying again at a higher depth.
+Success at depth 3 in 17.08014440536499 seconds for the last iteration.
+
+Success at depth 1 in 0.27472925186157227 seconds for the last iteration.
+
+[Event "0996 36648"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "6k1/p4p1p/6p1/2B5/8/6P1/PQq2P1P/3R2K1 b KQkq - 0 1"]
+
+1... Qxb2 2. Rd8+ Kg7 3. Bd4+ *
+Played move d8h8 instead of c5d4
+Failed at depth 1 in 0.24909448623657227 seconds. Trying again at a higher depth.
+Success at depth 2 in 0.46822237968444824 seconds for the last iteration.
+
+Success at depth 1 in 0.07746696472167969 seconds for the last iteration.
+
+Success at depth 1 in 0.15919256210327148 seconds for the last iteration.
+
+Success at depth 1 in 0.7006981372833252 seconds for the last iteration.
+
+Success at depth 1 in 0.6147658824920654 seconds for the last iteration.
+
+Success at depth 1 in 0.05188107490539551 seconds for the last iteration.
+
+Success at depth 1 in 0.3044552803039551 seconds for the last iteration.
+
+Success at depth 1 in 0.23353147506713867 seconds for the last iteration.
+
+Success at depth 1 in 0.7408623695373535 seconds for the last iteration.
+
+[Event "0997 30961"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "8/8/7b/7P/P1k5/2N5/4K3/8 b KQkq - 0 1"]
+
+1... Kxc3 2. a5 *
+Played move e2d1 instead of a4a5
+Failed at depth 1 in 0.017268657684326172 seconds. Trying again at a higher depth.
+Played move e2f3 instead of a4a5
+Failed at depth 2 in 0.07004785537719727 seconds. Trying again at a higher depth.
+Success at depth 3 in 0.66084885597229 seconds for the last iteration.
+
+Success at depth 1 in 0.26059412956237793 seconds for the last iteration.
+
+Success at depth 1 in 0.25173115730285645 seconds for the last iteration.
+
+Success at depth 1 in 0.3202064037322998 seconds for the last iteration.
+
+[Event "0998 52533"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "solver"]
+[Result "*"][SetUp "1"]
+[FEN "8/8/1p1b1k2/1Pp1pPp1/2P3P1/5PBp/4K2P/8 w KQkq - 0 1"]
+
+1. Kd3 e4+ 2. fxe4 Bxg3 *
+Played move f6g7 instead of d6g3
+Failed at depth 1 in 0.040641069412231445 seconds. Trying again at a higher depth.
+Played move d6b8 instead of e5e4
+Failed at depth 2 in 0.26893043518066406 seconds. Trying again at a higher depth.
+Played move d6f8 instead of e5e4
+Failed at depth 3 in 1.482715129852295 seconds. Trying again at a higher depth.
+Played move d6f8 instead of e5e4
+Failed at depth 4 in 3.4058821201324463 seconds. Trying again at a higher depth.
+Played move f6g7 instead of e5e4
+Failed at depth 5 in 20.341477155685425 seconds. Trying again at a higher depth.
+Played move d6c7 instead of e5e4
+Failed at depth 6 in 121.16000056266785 seconds. Trying again at a higher depth.
+Success at depth 7 in 4501.143715381622 seconds for the last iteration.
+
+[Event "0999 40904"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "solver"]
+[Result "*"][SetUp "1"]
+[FEN "r1bq2k1/pp2b1pp/3pp3/8/4Qr2/2N2P2/PPP3PP/2KR1B1R w KQkq - 0 1"]
+
+1. Qxf4 Bg5 *
+Played move d8c7 instead of e7g5
+Failed at depth 1 in 0.29635024070739746 seconds. Trying again at a higher depth.
+Success at depth 2 in 3.4326696395874023 seconds for the last iteration.
+
+[Event "0999 51828"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "solver"]
+[Result "*"][SetUp "1"]
+[FEN "4rr1k/p5bp/2pp2p1/5p2/5Nn1/1QP2bPP/PP3P2/R1B3K1 w KQkq - 0 1"]
+
+1. hxg4 Re1+ 2. Kh2 Rh1# *
+Played move f8g8 instead of e1h1
+Failed at depth 1 in 0.38788270950317383 seconds. Trying again at a higher depth.
+Success at depth 2 in 0.545088529586792 seconds for the last iteration.
+
+Success at depth 1 in 0.010691642761230469 seconds for the last iteration.
+
+[Event "1000 14881"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "solver"]
+[Result "*"][SetUp "1"]
+[FEN "8/2r2k1p/p5p1/8/3R1P2/2p1n1P1/P6P/4R2K w KQkq - 0 1"]
+
+1. Rxe3 c2 *
+Played move f7f8 instead of c3c2
+Failed at depth 1 in 0.12989521026611328 seconds. Trying again at a higher depth.
+Played move h7h5 instead of c3c2
+Failed at depth 2 in 1.2244982719421387 seconds. Trying again at a higher depth.
+Success at depth 3 in 24.615067958831787 seconds for the last iteration.
+
+Success at depth 1 in 0.009124755859375 seconds for the last iteration.
+
+Success at depth 1 in 0.3266127109527588 seconds for the last iteration.
+
+Success at depth 1 in 0.14996981620788574 seconds for the last iteration.
+
+Success at depth 1 in 0.7572581768035889 seconds for the last iteration.
+
+Success at depth 1 in 0.28567981719970703 seconds for the last iteration.
+
+Success at depth 1 in 0.2995476722717285 seconds for the last iteration.
+
+Success at depth 1 in 0.590714693069458 seconds for the last iteration.
+
+Success at depth 1 in 0.16487598419189453 seconds for the last iteration.
+
+[Event "1002 06530"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "7k/4r1p1/4P2p/2R5/p1B1p3/7P/PP4PK/2r5 b KQkq - 0 1"]
+
+1... e3 2. Rc8+ Kh7 3. Bd3+ *
+Played move c5c6 instead of c5c8
+Failed at depth 1 in 0.1700434684753418 seconds. Trying again at a higher depth.
+Success at depth 2 in 0.44711899757385254 seconds for the last iteration.
+
+[Event "1002 13614"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "4Brk1/R1R2b1p/p2r4/3p2P1/3Ppp2/1P6/PK3P1P/8 b KQkq - 0 1"]
+
+1... Bxe8 2. Rg7+ Kh8 3. Rxh7+ Kg8 4. Rag7# *
+Played move c7h7 instead of c7g7
+Failed at depth 1 in 0.11498808860778809 seconds. Trying again at a higher depth.
+Played move h7h8 instead of a7g7
+Failed at depth 2 in 0.5146467685699463 seconds. Trying again at a higher depth.
+Success at depth 3 in 0.8637862205505371 seconds for the last iteration.
+
+Success at depth 1 in 0.11806869506835938 seconds for the last iteration.
+
+Success at depth 1 in 0.5379514694213867 seconds for the last iteration.
+
+[Event "1004 54989"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "8/8/8/PK1k1ppp/2p5/6P1/2n4P/B7 b KQkq - 0 1"]
+
+1... Nxa1 2. a6 *
+Played move b5a4 instead of a5a6
+Failed at depth 1 in 0.01823735237121582 seconds. Trying again at a higher depth.
+Played move b5a4 instead of a5a6
+Failed at depth 2 in 0.10806512832641602 seconds. Trying again at a higher depth.
+Played move b5b6 instead of a5a6
+Failed at depth 3 in 1.0949881076812744 seconds. Trying again at a higher depth.
+Played move b5b6 instead of a5a6
+Failed at depth 4 in 27.541746377944946 seconds. Trying again at a higher depth.
+Success at depth 5 in 410.4363543987274 seconds for the last iteration.
+
+Success at depth 1 in 0.2963893413543701 seconds for the last iteration.
+
+Success at depth 1 in 0.12966489791870117 seconds for the last iteration.
+
+Success at depth 1 in 0.08578205108642578 seconds for the last iteration.
+
+Success at depth 1 in 0.5404543876647949 seconds for the last iteration.
+
+Success at depth 1 in 0.07559514045715332 seconds for the last iteration.
+
+Success at depth 1 in 0.02529764175415039 seconds for the last iteration.
+
+Success at depth 1 in 0.2466888427734375 seconds for the last iteration.
+
+[Event "1006 61706"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "solver"]
+[Black "?"]
+[Result "*"][SetUp "1"]
+[FEN "8/4kp2/2P1p1pp/2P1b3/B6P/6P1/5PK1/8 b KQkq - 0 1"]
+
+1... Bd4 2. c7 *
+Played move a4c2 instead of c6c7
+Failed at depth 1 in 0.0708925724029541 seconds. Trying again at a higher depth.
+Success at depth 2 in 0.33476948738098145 seconds for the last iteration.
+
+Success at depth 1 in 0.015379905700683594 seconds for the last iteration.
+
+Success at depth 1 in 0.1863994598388672 seconds for the last iteration.
+
+Success at depth 1 in 0.2353670597076416 seconds for the last iteration.
+
+Success at depth 1 in 0.010312080383300781 seconds for the last iteration.
+
+Success at depth 1 in 0.08300089836120605 seconds for the last iteration.
+
+Success at depth 1 in 0.185882568359375 seconds for the last iteration.
+
