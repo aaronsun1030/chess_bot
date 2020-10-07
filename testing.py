@@ -46,6 +46,8 @@ while tactic:
         player.board.push(move)
     if not fail:
         failed.write("Success at depth " + str(last_d) + " in " + str(time.time() - start) + " seconds for the last iteration.\n\n")
+        failed.close()
+        failed = open("testing/failed.txt", 'a')
         tactic = chess.pgn.read_game(pgn)
         num += 1
         print(num)
