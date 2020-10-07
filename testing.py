@@ -17,14 +17,9 @@ fail = False
 last_d = 0
 num = int(current.read())
 current.close()
-current = open("testing/current.txt", 'w')
-current.write(str(num + 10))
-current.close()
 
 for i in range(num):
     tactic = chess.pgn.read_game(pgn)
-
-num = 0
 
 while tactic:
     if first_try:
@@ -53,7 +48,10 @@ while tactic:
         failed.write("Success at depth " + str(last_d) + " in " + str(time.time() - start) + " seconds for the last iteration.\n\n")
         tactic = chess.pgn.read_game(pgn)
         num += 1
-        if num % 10 == 0:
+        current = open("testing/current.txt", 'w')
+        current.write(str(num))
+        current.close()
+        if num % 1 == 0:
             break
         first_try = True
     else:
