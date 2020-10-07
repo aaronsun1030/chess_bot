@@ -48,10 +48,11 @@ while tactic:
         failed.write("Success at depth " + str(last_d) + " in " + str(time.time() - start) + " seconds for the last iteration.\n\n")
         tactic = chess.pgn.read_game(pgn)
         num += 1
+        print(num)
         current = open("testing/current.txt", 'w')
         current.write(str(num))
         current.close()
-        if num % 1 == 0:
+        if num % 100 == 0:
             break
         first_try = True
     else:
