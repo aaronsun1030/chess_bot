@@ -4,10 +4,21 @@ import chess.pgn
 import chess
 import time
 
-pgn = open("testing/tactics.pgn")
-failed = open("testing/failed.txt", 'a')
-current = open("testing/current.txt", 'r')
+"""A testing file, which tries to solve a set of tactics at varying depths.
+Starts for n-th tactic, where n is the value written in current.txt and saves
+the results to results.txt. Does exactly tactics_per_run number of tactics per run."""
+
+# TODO: Change this to your heuristic!
 h = heuristic.heuristic()
+# The number of tactics to solve.
+tactics_per_run = 100
+# The depth at which to give up (make smaller to make it not run forever)
+max_depth = 5
+
+pgn = open("testing/tactics.pgn")
+results = open("testing/results.txt", 'a')
+current = open("testing/current.txt", 'r')
+
 white = AI.AI(None, 1, h)
 black = AI.AI(None, -1, h)
 
@@ -37,29 +48,34 @@ while tactic:
             m = player.best_move()
             if m != move:
                 if first_try:
-                    failed.write(str(tactic)[:-11] + '\n')
-                failed.write("Played move " + str(m) + " instead of " + str(move) + '\n')
+                    results.write(str(tactic)[:-11] + '\n')
+                results.write("Played move " + str(m) + " instead of " + str(move) + '\n')
                 fail = True
                 break
             player.d_limit -= 1
         turn += 1
         player.board.push(move)
-    if not fail:
-        failed.write("Success at depth " + str(last_d) + " in " + str(time.time() - start) + " seconds for the last iteration.\n\n")
-        failed.close()
-        failed = open("testing/failed.txt", 'a')
+    if fail:
+        results.write('Failed at depth ' + str(last_d) + " in " + str(time.time() - start) + ' seconds. Trying again at a higher depth.\n')
+        first_try = False
+        if max_depth and last_d + 1 == max_depth:
+            results.write('Giving up now...\n\n')
+            results.close()
+            results = open("testing/results.txt", 'a')
+            first_try = True
+    else:
+        results.write("Success at depth " + str(last_d) + " in " + str(time.time() - start) + " seconds for the last iteration.\n\n")
+        results.close()
+        results = open("testing/results.txt", 'a')
+        first_try = True
+    if first_try:
         tactic = chess.pgn.read_game(pgn)
         num += 1
-        print(num)
         current = open("testing/current.txt", 'w')
         current.write(str(num))
         current.close()
-        if num % 8000 == 0:
+        if num % 100 == 0:
             break
-        first_try = True
-    else:
-        failed.write('Failed at depth ' + str(last_d) + " in " + str(time.time() - start) + ' seconds. Trying again at a higher depth.\n')
-        first_try = False
-
+        
 pgn.close()
-failed.close()
+results.close()

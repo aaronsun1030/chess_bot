@@ -10,6 +10,9 @@ AI.py or between user input and a single AI. This is primarily meant to
 be used in order to test the AI.
 """
 
+# TODO: Change this to your heuristic!
+h = heuristic.heuristic()
+
 def run_AI_game(b, h):
     white = AI.AI(b, 1, h)
     black = AI.AI(b, -1, h)
@@ -55,7 +58,6 @@ def main():
     if new == 'y':
         fen = input('Enter your FEN: ')
     b = chess.Board(fen)
-    h = heuristic.heuristic()
 
     if color:
         run_human_AI_game(b, h, color)

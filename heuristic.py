@@ -12,11 +12,18 @@ This file is meant to be changed for the purposes of the competition.
 class heuristic:
 
     def __init__(self):
+        # Value of each piece. Capital letters are white, lower case are black.
         self.pieces = {'q': -9, 'r': -5, 'b': -3, 'n': -3, 'p': -1,
             'Q': 9, 'R': 5, 'B': 3, 'N': 3, 'P': 1}
+        # The value of delta for delta pruning. See chessprogramming wiki.
+        self.delta = 2
+        # The value for futility pruning for depths 0 (not done), 1, 2, 3. See chessprogramming wiki.
+        self.futility = [0, 3, 5, 9]
+        # The maximum depth we will try to search, used for testing purposes.
+        self.d_limit = None
 
     def static_score(self, fen):
-        """Returns the heuristic score of the board. fen is given as a FEN of the board."""
+        """Returns the heuristic score of the board. fen is given as a FEN string of the board."""
         score = 0
         board = self.fen_to_array(fen)
         for i in range(len(board)):
@@ -42,5 +49,7 @@ class heuristic:
         return array  
 
     def think_time(self, fen, my_time, opp_time):
-        return 20000
+        """The amount of time we will think on this move, based on the
+        current board, and our/the opponent's remaining time. Searches deeper with more time."""
+        return 20
 

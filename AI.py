@@ -40,9 +40,9 @@ class AI:
         self.pieces = {1: 1, 2: 3, 3: 3, 4: 5, 5: 9, 6: 0}
 
         # Quiescence stuff
-        self.delta = 2
-        self.futility = [0, 3, 5, 9]
-        self.d_limit = 10
+        self.delta = self.heuristic.delta
+        self.futility = self.heuristic.futility
+        self.d_limit = self.heuristic.d_limit
  
     def best_move(self):
         """Find and return the best move for the given position."""  
@@ -54,35 +54,31 @@ class AI:
         """Run iterative deepening, stopping on the last depth once time runs out"""
         self.start_time = time.time()
         self.time_limit = limit
-        d = self.d_limit
+        d = 1
         move = list(self.board.legal_moves)[0]
         while time.time() - self.start_time < limit:
             self.current_depth = d
-            #print('delta:', self.delta_count, 'futility:', self.fut_count)
-            self.delta_count = self.fut_count = 0
-            #print(d, time.time() - self.start_time)
             if self.last_found_move:
                 move = self.last_found_move
-                #print('Best move:', move)
-            if d == self.d_limit + 1:
+            if self.d_limit and d == self.d_limit + 1:
                 break
             self.find_move(self.board, d, True,
-                self.color, -1 * self.INFTY, self.INFTY)
+                self.color, -1 * self.INFTY, self.INFTY, None)
             d += 1
         return move
 
-    def find_move(self, board, depth, saveMove, turn, alpha, beta):
+    def find_move(self, board, depth, saveMove, turn, alpha, beta, moves):
         """Does alpha-beta pruning to find the best move for the given position."""
         limit = self.check_limits(board, depth, False)
         if limit:
             if isinstance(limit, int):
-                return 0 if limit == 1 else limit * -turn
+                return 0 if limit == 1 else limit * -turn, None
             else:
-                return None
-
+                return None, None
+        # Quiescence search and futility pruning
         if depth == 0:
             return self.quiescence(board, self.current_depth * 2, False, 
-                turn, -1 * self.INFTY, self.INFTY)
+                turn, -1 * self.INFTY, self.INFTY, None)
         elif depth < self.current_depth and depth <= 3:
             if not board.is_check():
                 try:
@@ -97,8 +93,7 @@ class AI:
                     pat = self.heuristic.static_score(board.fen())
                     if (turn * (pat - turn * self.futility[depth]) >= 
                         turn * (beta if turn == 1 else alpha)):
-                        self.fut_count += 1
-                        return pat
+                        return pat, None
         
         b_prev = None
         b_index = self.hasher(board) % self.TABLE_SIZE
@@ -108,12 +103,12 @@ class AI:
                 if b_prev[3] >= depth:
                     if saveMove:
                         self.last_found_move = b_prev[4]
-                    return b_prev[1]  
+                    return b_prev[1], b_prev[4]
             else:
                 b_prev = None
 
         best_value, refute = self.alpha_beta_pruning(board, depth,
-            self.move_order(board, b_prev, False), turn, alpha, beta, False)
+            self.move_order(board, b_prev, moves, False), turn, alpha, beta, False)
 
         if saveMove:
             self.last_found_move = refute
@@ -121,74 +116,70 @@ class AI:
             "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
             depth, refute)
 
-        return best_value
+        return best_value, refute
 
-    def quiescence(self, board, depth, saveMove, turn, alpha, beta):
+    def quiescence(self, board, depth, saveMove, turn, alpha, beta, moves):
+        """Quiescence search, which searches checks and captures to a given depth."""
         limit = self.check_limits(board, depth, True)
         if limit:
             if isinstance(limit, int):
-                return limit * -turn
+                return limit * -turn, None
             else:
-                return None
+                return None, None
         if depth == 0:
-            return self.heuristic.static_score(board.fen())
+            return self.heuristic.static_score(board.fen()), None
         
         pat = self.heuristic.static_score(board.fen())
         if not board.is_check():
             if turn == 1:
                 alpha = max(pat, alpha)
                 if pat >= beta:
-                    return beta
+                    return beta, None
             else:
                 beta = min(pat, beta)
                 if pat <= alpha:
-                    return alpha
+                    return alpha, None
 
-        best_value, _ = self.alpha_beta_pruning(board, depth,
-            self.move_order(board, None, True), turn, alpha, beta,
+        # Delta pruning given here
+        best_value, refute = self.alpha_beta_pruning(board, depth,
+            self.move_order(board, None, moves, True), turn, alpha, beta,
             lambda m, a: turn * (pat + turn * 
                 (self.pieces[board.piece_type_at(m.to_square) or 1] + self.delta)) < turn * a)
 
         if best_value == -turn * self.INFTY:
             return pat
 
-        return best_value
-        
-
-    def check_limits(self, board, depth, Q):
-        if time.time() - self.start_time > self.time_limit:
-            return True
-        if board.is_checkmate():
-            return self.WINNING_VALUE - ((self.current_depth - depth) + (2 * self.current_depth if Q else 0))
-        if board.can_claim_draw() or board.is_stalemate():
-            return 1
-        return False
+        return best_value, refute
 
     def alpha_beta_pruning(self, board, depth, moves, turn, alpha, beta, Q):
-
+        """Runs alpha-beta pruning, by going through each move and doing
+        a recursive call on each move. There are two cases for quiescence and regular search."""
         best_value = -turn * self.INFTY
         current_value = 0
         refute = None
+        killers = set()
 
         for move in moves:
             board.push(move)
+            temp = None
             if Q:
                 if not board.is_capture(move):
-                    current_value = self.quiescence(board, depth - 1, 
-                        False, turn * -1, alpha, beta)
+                    current_value, temp = self.quiescence(board, depth - 1, 
+                        False, turn * -1, alpha, beta, killers)
                 else:
                     if Q(move, alpha if turn == 1 else beta):
-                        self.delta_count += 1
                         current_value = alpha if turn == 1 else beta
                     else:
-                        current_value = self.quiescence(board, depth - 1, 
-                            False, turn * -1, alpha, beta)
+                        current_value, temp = self.quiescence(board, depth - 1, 
+                            False, turn * -1, alpha, beta, killers)
             else:
-                current_value = self.find_move(board, depth - 1, 
-                    False, turn * -1, alpha, beta)
+                current_value, temp = self.find_move(board, depth - 1, 
+                    False, turn * -1, alpha, beta, killers)
+            if temp:
+                killers.add(temp)
             board.pop()
             if current_value is None:
-                return None 
+                return None, None
             if turn == 1:
                 if current_value > best_value:
                     best_value = current_value
@@ -204,18 +195,39 @@ class AI:
         
         return alpha if turn == 1 else beta, refute
             
+    def check_limits(self, board, depth, Q):
+        """Check whether to stop the search here for checkmate, draw, or timeout."""
+        if time.time() - self.start_time > self.time_limit:
+            return True
+        if board.is_checkmate():
+            return self.WINNING_VALUE - ((self.current_depth - depth) + (2 * self.current_depth if Q else 0))
+        if board.can_claim_draw() or board.is_stalemate():
+            return 1
+        return False
 
-    def move_order(self, board, b_prev, Q):
+    def move_order(self, board, b_prev, killers, Q):
+        """Outputs the given moves for board, in the following order:
+        1. Captures
+        2. Checks
+        The above two are given for quiescence Q, the below are not.
+        3. Killers, or the best refutation for sister nodes
+        4. All other legal moves in random order
+        """
         Q = Q and not board.is_check()
         moves = set(board.legal_moves)
         captures = []
         checks = []
         for m in moves:
+            remove = False
             if board.is_capture(m):
                 captures.append(m)
+                remove = True
             else:
                 if board.gives_check(m):
                     checks.append(m)
+                    remove = True
+            if remove and killers:
+                killers.discard(m)
         captures.sort(key=lambda m: 90 if board.is_en_passant(m) else 
             9 * self.pieces[board.piece_type_at(m.from_square)] - 
             self.pieces[board.piece_type_at(m.to_square)])
@@ -231,15 +243,12 @@ class AI:
             yield c
             if not Q:
                 moves.remove(c)
+        if killers:
+            for k in killers:
+                if k in moves:
+                    yield k
+                    if not Q:
+                        moves.remove(k)
         if not Q:
             for m in moves:
                 yield m
-
-"""import heuristic
-import chess
-h = heuristic.heuristic()
-b = chess.Board('rnb5/pp2nppk/2p4p/2bp3q/P6P/1P4P1/2PPNP2/R1BQKR2 w Q - 0 16')
-a = AI(b, 1, h)
-random.seed(2000000)
-print(a.best_move())
-print(a.delta_count, a.fut_count)"""
