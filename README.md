@@ -2,11 +2,4 @@
 Minimax Chess AI.
 
 TODO:
-* Needs testing: Implement faster mate
 * Actually claim draw, don't just stop the game
-* Quiescence search
-* Transposition tables
-* Move ordering
-* Hash functions
-
-GUI? @ Josh
