@@ -74,7 +74,7 @@ while tactic:
         current = open("testing/current.txt", 'w')
         current.write(str(num))
         current.close()
-        if num % 100 == 0:
+        if num % tactics_per_run == 0:
             break
         
 pgn.close()
