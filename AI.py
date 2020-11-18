@@ -99,7 +99,7 @@ class AI:
         b_index = self.hasher(board) % self.TABLE_SIZE
         b_prev = self.t_table[b_index]
         if b_prev:
-            if b_prev[0] == board.board_fen():
+            if b_prev[0] == board.board_fen() and b_prev[5] == turn:
                 if b_prev[3] >= depth:
                     if saveMove:
                         self.last_found_move = b_prev[4]
@@ -114,7 +114,7 @@ class AI:
             self.last_found_move = refute
         self.t_table[b_index] = (board.board_fen(), best_value, 
             "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
-            depth, refute)
+            depth, refute, turn)
 
         return best_value, refute
 
