@@ -3,7 +3,8 @@ Minimax Chess AI.
 
 Skeleton code for the chess heuristic competition. 
 
-The competiton involves making the best chess heuristic for a chess AI. Everyone's will use the same AI, which uses some basic alpha beta pruning, but with a different heuristic (the part that tells how good or bad the position is).
+The competiton involves making the best chess heuristic for a chess AI. Everyone's will use the same AI, which uses some basic alpha beta pruning, but with a different heuristic (the part that tells how good or bad the position is).  
+If you are interested in competing, please fill out this form: https://forms.gle/kRakX19n7KJwKdmx9
 
 File descriptions:
 
