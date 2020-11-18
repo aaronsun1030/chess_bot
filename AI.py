@@ -47,7 +47,7 @@ class AI:
     def best_move(self):
         """Find and return the best move for the given position."""  
         self.last_found_move = None
-        move = self.iterative_deepening(self.heuristic.think_time(self.board.fen(), 0, 0))
+        move = self.iterative_deepening(self.heuristic.think_time(self.board.board_fen(), 0, 0))
         return move
     
     def iterative_deepening(self, limit):
@@ -90,7 +90,7 @@ class AI:
                 else:
                     if prev:
                         board.push(prev)
-                    pat = self.heuristic.static_score(board.fen())
+                    pat = self.heuristic.static_score(board.board_fen())
                     if (turn * (pat - turn * self.futility[depth]) >= 
                         turn * (beta if turn == 1 else alpha)):
                         return pat, None
@@ -99,7 +99,7 @@ class AI:
         b_index = self.hasher(board) % self.TABLE_SIZE
         b_prev = self.t_table[b_index]
         if b_prev:
-            if b_prev[0] == board.fen():
+            if b_prev[0] == board.board_fen():
                 if b_prev[3] >= depth:
                     if saveMove:
                         self.last_found_move = b_prev[4]
@@ -112,7 +112,7 @@ class AI:
 
         if saveMove:
             self.last_found_move = refute
-        self.t_table[b_index] = (board.fen(), best_value, 
+        self.t_table[b_index] = (board.board_fen(), best_value, 
             "PV" if alpha < best_value and best_value < beta else ("CUT" if beta <= alpha else "ALL"), 
             depth, refute)
 
@@ -127,9 +127,9 @@ class AI:
             else:
                 return None, None
         if depth == 0:
-            return self.heuristic.static_score(board.fen()), None
+            return self.heuristic.static_score(board.board_fen()), None
         
-        pat = self.heuristic.static_score(board.fen())
+        pat = self.heuristic.static_score(board.board_fen())
         if not board.is_check():
             if turn == 1:
                 alpha = max(pat, alpha)
